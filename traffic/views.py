@@ -135,23 +135,24 @@ def logout_view(request):
     auth_logout(request)
     return redirect('login')
 
+
+from django.contrib.auth.forms import PasswordResetForm
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            send_mail(
-                'Password Reset Request',
-                'Click the link to reset your password: http://example.com/reset_password/',
-                'from@example.com',
-                [email],
-                fail_silently=False,
+        form = PasswordResetForm({'email': email})
+        
+        if form.is_valid():
+            form.save(
+                request=request,
+                use_https=False,
+                email_template_name='registration/password_reset_email.html',
             )
             return HttpResponse("A password reset link has been sent to your email.")
-        except User.DoesNotExist:
-            return render(request, 'forgot_password.html', {'error': 'Email not found'})
+        else:
+            return render(request, 'forgot_password.html', {'error': 'Invalid email address'})
+    
     return render(request, 'forgot_password.html')
-
 
 
 
