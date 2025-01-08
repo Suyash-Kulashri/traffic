@@ -86,20 +86,14 @@ def signup(request):
         email = request.POST.get('email')
         pass1 = request.POST.get('password1')
         pass2 = request.POST.get('password2')
-        if not uname or not email or not pass1 or not pass2:
-            messages.error(request, 'All fields are required!')
-            return render(request, 'signup.html')
-        # Check if passwords match
-        if pass1 != pass2:
-            return render(request, 'signup.html', {'error': 'Passwords do not match!'})
-
+        
         # Check if username already exists
         if User.objects.filter(username=uname).exists():
-            return render(request, 'signup.html', {'error': 'Username already exists!'})
+            return HttpResponse('error' 'Username already exists!')
 
         # Check if email already exists
         if User.objects.filter(email=email).exists():
-            return render(request, 'signup.html', {'error': 'Email already exists!'})
+            return HttpResponse('error' 'Email already exists!')
 
         # Validate password
         try:
@@ -128,7 +122,7 @@ def login_view(request):
             auth_login(request, user)
             return redirect('home')
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials.'})
+            return HttpResponse({'error: Invalid credentials.'})
     return render(request, 'login.html')
 
 def logout_view(request):
